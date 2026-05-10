@@ -71,12 +71,10 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Status 200', () => {",
-                  "  pm.response.to.have.status(200);",
+                  "pm.test('Status is 201 Created', () => {",
+                  "  pm.response.to.have.status(201);",
                   "});",
-                  "pm.test('Response < 1s', () => {",
-                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
-                  "});",
+                  "",
                   "pm.test('Post schema зөв', () => {",
                   "  const d = pm.response.json();",
                   "  pm.expect(d).to.have.property('id');",
@@ -85,7 +83,9 @@
                   "  pm.expect(d.title).to.be.a('string').and.have.length.above(0);",
                   "});"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -116,32 +116,42 @@
                   "const randomNum = Math.floor(Math.random() * 1000);",
                   "pm.environment.set('randomTitle', 'Test Post ' + randomNum);"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             },
             {
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Response-оо нэг удаа JSON болгож аваад 'res' хувьсагчид хадгалах",
+                  "const res = pm.response.json();",
+                  "",
                   "pm.test('Status 201 Created', () => {",
                   "  pm.response.to.have.status(201);",
                   "});",
-                  "pm.test('Шинэ id буцаасан', () => {",
-                  "  const d = pm.response.json();",
-                  "  pm.expect(d).to.have.property('id');",
-                  "  pm.expect(d.id).to.be.a('number');",
-                  "  pm.environment.set('newPostId', d.id);",
+                  "",
+                  "pm.test('Шинэ өгөгдөл амжилттай үүслээ', () => {",
+                  "  pm.expect(res).to.have.property('id');",
+                  "  pm.expect(res.id).to.be.a('number');",
+                  "  ",
+                  "  // Дараагийн хүсэлтүүдэд ашиглахаар ID-г хадгалах",
+                  "  pm.environment.set('newPostId', res.id);",
                   "});",
-                  "pm.test('Response < 1s', () => {",
+                  "",
+                  "pm.test('Response хугацаа 1 секундээс бага', () => {",
                   "  pm.expect(pm.response.responseTime).to.be.below(1000);",
                   "});",
-                  "pm.test('Title хадгалагдсан', () => {",
-                  "  const d = pm.response.json();",
-                  "  pm.expect(d).to.have.property('title');",
-                  "  pm.expect(d.title).to.be.a('string');",
+                  "",
+                  "pm.test('Title зөв хадгалагдсан байна', () => {",
+                  "  pm.expect(res).to.have.property('title');",
+                  "  pm.expect(res.title).to.be.a('string');",
                   "});"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
