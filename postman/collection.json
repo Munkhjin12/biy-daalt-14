@@ -186,19 +186,19 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Status 200', () => {",
+                  "pm.test(\"Status 200\", () => {",
                   "  pm.response.to.have.status(200);",
                   "});",
-                  "pm.test('Өөрчлөлт хадгалагдсан', () => {",
+                  "",
+                  "pm.test(\"Өөрчлөлт хадгалагдсан\", () => {",
                   "  const d = pm.response.json();",
-                  "  pm.expect(d.title).to.equal('Шинэчилсэн нийтлэл');",
+                  "  pm.expect(d.title).to.equal(\"Шинэчилсэн нийтлэл\");",
                   "  pm.expect(d.id).to.equal(1);",
-                  "});",
-                  "pm.test('Response < 1s', () => {",
-                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
                   "});"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -234,14 +234,17 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Status 200', () => {",
+                  "pm.test(\"Status 200\", () => {",
                   "  pm.response.to.have.status(200);",
                   "});",
-                  "pm.test('Response < 1s', () => {",
+                  "",
+                  "pm.test(\"Response < 1s\", () => {",
                   "  pm.expect(pm.response.responseTime).to.be.below(1000);",
                   "});"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
