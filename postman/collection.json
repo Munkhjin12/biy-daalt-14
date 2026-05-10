@@ -330,14 +330,17 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Status 404 Not Found', () => {",
+                  "pm.test(\"Status 404 Not Found\", () => {",
                   "  pm.response.to.have.status(404);",
                   "});",
-                  "pm.test('Response < 1s', () => {",
+                  "",
+                  "pm.test(\"Response < 1s\", () => {",
                   "  pm.expect(pm.response.responseTime).to.be.below(1000);",
                   "});"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -364,14 +367,13 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Status 404 Not Found', () => {",
+                  "pm.test(\"Status 404 Not Found\", () => {",
                   "  pm.response.to.have.status(404);",
-                  "});",
-                  "pm.test('Response < 1s', () => {",
-                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
                   "});"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
