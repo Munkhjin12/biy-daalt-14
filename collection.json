@@ -1,0 +1,411 @@
+{
+  "info": {
+    "_postman_id": "4c2e89cf-b518-479d-bd0d-e3c5d733af72",
+    "name": "Munkhjin— JSONPlaceholder",
+    "description": "F.CSM311 Бие даалт 14 — JSONPlaceholder API тест",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54644311",
+    "_collection_link": "https://go.postman.co/collection/54644311-4c2e89cf-b518-479d-bd0d-e3c5d733af72?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Posts",
+      "item": [
+        {
+          "name": "Happy GET — Бүх нийтлэл авах",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Pre-request: хүсэлт явуулах цагийн тэмдэглэл хадгалах",
+                  "pm.environment.set('requestTime', new Date().toISOString());"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response < 2s', () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});",
+                  "",
+                  "// JSON өгөгдлийг нэг удаа авч хувьсагчид хадгална",
+                  "const responseData = pm.response.json(); ",
+                  "",
+                  "pm.test('Response нь array', () => {",
+                  "  pm.expect(responseData).to.be.an('array');",
+                  "  pm.expect(responseData.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test('Content-Type JSON байна', () => {",
+                  "  pm.response.to.have.header('Content-Type');",
+                  "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "});",
+                  "",
+                  "pm.test('Эхний элемент schema зөв', () => {",
+                  "  const first = responseData[0];",
+                  "  pm.expect(first).to.have.property('id');",
+                  "  pm.expect(first).to.have.property('title');",
+                  "  pm.expect(first).to.have.property('body');",
+                  "  pm.expect(first).to.have.property('userId');",
+                  "  pm.expect(first.id).to.be.a('number');",
+                  "});",
+                  "",
+                  "// Chain: Өмнө зарласан responseData-аа ашиглана",
+                  "pm.environment.set('postId', responseData[0].id);",
+                  "pm.environment.set('userId', responseData[0].userId);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET by id — Нийтлэл id-аар авах",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response < 1s', () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "pm.test('Post schema зөв', () => {",
+                  "  const d = pm.response.json();",
+                  "  pm.expect(d).to.have.property('id');",
+                  "  pm.expect(d).to.have.property('title');",
+                  "  pm.expect(d).to.have.property('body');",
+                  "  pm.expect(d.title).to.be.a('string').and.have.length.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/{{postId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "{{postId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST create — Шинэ нийтлэл үүсгэх",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Pre-request: random title үүсгэх",
+                  "const randomNum = Math.floor(Math.random() * 1000);",
+                  "pm.environment.set('randomTitle', 'Test Post ' + randomNum);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 Created', () => {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Шинэ id буцаасан', () => {",
+                  "  const d = pm.response.json();",
+                  "  pm.expect(d).to.have.property('id');",
+                  "  pm.expect(d.id).to.be.a('number');",
+                  "  pm.environment.set('newPostId', d.id);",
+                  "});",
+                  "pm.test('Response < 1s', () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "pm.test('Title хадгалагдсан', () => {",
+                  "  const d = pm.response.json();",
+                  "  pm.expect(d).to.have.property('title');",
+                  "  pm.expect(d.title).to.be.a('string');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"{{randomTitle}}\",\n  \"body\": \"Энэ бол Newman CI тестийн нийтлэл\",\n  \"userId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT update — Нийтлэл бүрэн шинэчлэх",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Өөрчлөлт хадгалагдсан', () => {",
+                  "  const d = pm.response.json();",
+                  "  pm.expect(d.title).to.equal('Шинэчилсэн нийтлэл');",
+                  "  pm.expect(d.id).to.equal(1);",
+                  "});",
+                  "pm.test('Response < 1s', () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"title\": \"Шинэчилсэн нийтлэл\",\n  \"body\": \"Шинэчилсэн агуулга\",\n  \"userId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE — Нийтлэл устгах",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response < 1s', () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "GET User by id — Хэрэглэгч авах",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('User schema зөв', () => {",
+                  "  const d = pm.response.json();",
+                  "  pm.expect(d).to.have.property('id');",
+                  "  pm.expect(d).to.have.property('name');",
+                  "  pm.expect(d).to.have.property('email');",
+                  "  pm.expect(d).to.have.property('username');",
+                  "});",
+                  "pm.test('Email формат зөв (бизнес дүрэм)', () => {",
+                  "  const d = pm.response.json();",
+                  "  pm.expect(d.email).to.be.a('string').and.match(/@/);",
+                  "});",
+                  "pm.test('id нь тоо', () => {",
+                  "  const d = pm.response.json();",
+                  "  pm.expect(d.id).to.be.a('number');",
+                  "});",
+                  "pm.test('Content-Type JSON байна', () => {",
+                  "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Errors",
+      "item": [
+        {
+          "name": "Error — Байхгүй нийтлэл (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 404 Not Found', () => {",
+                  "  pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('Response < 1s', () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Error — Байхгүй хэрэглэгч (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 404 Not Found', () => {",
+                  "  pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('Response < 1s', () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/99999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "99999"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://jsonplaceholder.typicode.com"
+    }
+  ]
+}

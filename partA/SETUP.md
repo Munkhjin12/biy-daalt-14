@@ -31,7 +31,7 @@ https://jsonplaceholder.typicode.com
 
 ### Workspace
 - **Workspace нэр:** `F.CSM311 — Lab14`
-- **Collection нэр:** `<Овог> — JSONPlaceholder`
+- **Collection нэр:** `<Munkhjin> — JSONPlaceholder`
 - **Environment:** `dev` → `baseUrl = https://jsonplaceholder.typicode.com`
 
 ### Тэмдэглэл
