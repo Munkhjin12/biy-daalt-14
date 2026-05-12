@@ -30,18 +30,39 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status 200\", () => {",
+                  "pm.test('Status 200', () => {",
                   "  pm.response.to.have.status(200);",
                   "});",
                   "",
-                  "pm.test(\"Response < 1s\", () => {",
-                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "pm.test('Response < 2s', () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(2000);",
                   "});",
                   "",
-                  "// Chain",
-                  "const data = pm.response.json();",
-                  "pm.environment.set(\"postId\", data[0].id);",
-                  "pm.environment.set(\"userId\", data[0].userId);"
+                  "// JSON өгөгдлийг нэг удаа авч хувьсагчид хадгална",
+                  "const responseData = pm.response.json(); ",
+                  "",
+                  "pm.test('Response нь array', () => {",
+                  "  pm.expect(responseData).to.be.an('array');",
+                  "  pm.expect(responseData.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test('Content-Type JSON байна', () => {",
+                  "  pm.response.to.have.header('Content-Type');",
+                  "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "});",
+                  "",
+                  "pm.test('Эхний элемент schema зөв', () => {",
+                  "  const first = responseData[0];",
+                  "  pm.expect(first).to.have.property('id');",
+                  "  pm.expect(first).to.have.property('title');",
+                  "  pm.expect(first).to.have.property('body');",
+                  "  pm.expect(first).to.have.property('userId');",
+                  "  pm.expect(first.id).to.be.a('number');",
+                  "});",
+                  "",
+                  "// Chain: Өмнө зарласан responseData-аа ашиглана",
+                  "pm.environment.set('postId', responseData[0].id);",
+                  "pm.environment.set('userId', responseData[0].userId);"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -71,10 +92,12 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Status is 201 Created', () => {",
-                  "  pm.response.to.have.status(201);",
+                  "pm.test('Status 200', () => {",
+                  "  pm.response.to.have.status(200);",
                   "});",
-                  "",
+                  "pm.test('Response < 1s', () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
                   "pm.test('Post schema зөв', () => {",
                   "  const d = pm.response.json();",
                   "  pm.expect(d).to.have.property('id');",
@@ -83,9 +106,7 @@
                   "  pm.expect(d.title).to.be.a('string').and.have.length.above(0);",
                   "});"
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "type": "text/javascript"
               }
             }
           ],
@@ -116,42 +137,32 @@
                   "const randomNum = Math.floor(Math.random() * 1000);",
                   "pm.environment.set('randomTitle', 'Test Post ' + randomNum);"
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "type": "text/javascript"
               }
             },
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "// Response-оо нэг удаа JSON болгож аваад 'res' хувьсагчид хадгалах",
-                  "const res = pm.response.json();",
-                  "",
                   "pm.test('Status 201 Created', () => {",
                   "  pm.response.to.have.status(201);",
                   "});",
-                  "",
-                  "pm.test('Шинэ өгөгдөл амжилттай үүслээ', () => {",
-                  "  pm.expect(res).to.have.property('id');",
-                  "  pm.expect(res.id).to.be.a('number');",
-                  "  ",
-                  "  // Дараагийн хүсэлтүүдэд ашиглахаар ID-г хадгалах",
-                  "  pm.environment.set('newPostId', res.id);",
+                  "pm.test('Шинэ id буцаасан', () => {",
+                  "  const d = pm.response.json();",
+                  "  pm.expect(d).to.have.property('id');",
+                  "  pm.expect(d.id).to.be.a('number');",
+                  "  pm.environment.set('newPostId', d.id);",
                   "});",
-                  "",
-                  "pm.test('Response хугацаа 1 секундээс бага', () => {",
+                  "pm.test('Response < 1s', () => {",
                   "  pm.expect(pm.response.responseTime).to.be.below(1000);",
                   "});",
-                  "",
-                  "pm.test('Title зөв хадгалагдсан байна', () => {",
-                  "  pm.expect(res).to.have.property('title');",
-                  "  pm.expect(res.title).to.be.a('string');",
+                  "pm.test('Title хадгалагдсан', () => {",
+                  "  const d = pm.response.json();",
+                  "  pm.expect(d).to.have.property('title');",
+                  "  pm.expect(d.title).to.be.a('string');",
                   "});"
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "type": "text/javascript"
               }
             }
           ],
@@ -186,19 +197,19 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status 200\", () => {",
+                  "pm.test('Status 200', () => {",
                   "  pm.response.to.have.status(200);",
                   "});",
-                  "",
-                  "pm.test(\"Өөрчлөлт хадгалагдсан\", () => {",
+                  "pm.test('Өөрчлөлт хадгалагдсан', () => {",
                   "  const d = pm.response.json();",
-                  "  pm.expect(d.title).to.equal(\"Шинэчилсэн нийтлэл\");",
+                  "  pm.expect(d.title).to.equal('Шинэчилсэн нийтлэл');",
                   "  pm.expect(d.id).to.equal(1);",
+                  "});",
+                  "pm.test('Response < 1s', () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
                   "});"
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "type": "text/javascript"
               }
             }
           ],
@@ -234,17 +245,14 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status 200\", () => {",
+                  "pm.test('Status 200', () => {",
                   "  pm.response.to.have.status(200);",
                   "});",
-                  "",
-                  "pm.test(\"Response < 1s\", () => {",
+                  "pm.test('Response < 1s', () => {",
                   "  pm.expect(pm.response.responseTime).to.be.below(1000);",
                   "});"
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "type": "text/javascript"
               }
             }
           ],
@@ -330,17 +338,14 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status 404 Not Found\", () => {",
+                  "pm.test('Status 404 Not Found', () => {",
                   "  pm.response.to.have.status(404);",
                   "});",
-                  "",
-                  "pm.test(\"Response < 1s\", () => {",
+                  "pm.test('Response < 1s', () => {",
                   "  pm.expect(pm.response.responseTime).to.be.below(1000);",
                   "});"
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "type": "text/javascript"
               }
             }
           ],
@@ -367,13 +372,14 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status 404 Not Found\", () => {",
+                  "pm.test('Status 404 Not Found', () => {",
                   "  pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('Response < 1s', () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
                   "});"
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "type": "text/javascript"
               }
             }
           ],

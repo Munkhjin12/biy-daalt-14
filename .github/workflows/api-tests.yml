@@ -18,8 +18,9 @@ jobs:
       - name: Install Newman
         run: npm install -g newman newman-reporter-htmlextra
 
-      - name: Run API tests
+         - name: Run API tests
         run: |
+          mkdir -p reports  # Хавтас байхгүй бол үүсгэж өгнө
           newman run postman/collection.json \
             -e postman/env.ci.json \
             --reporters cli,junit,htmlextra \
